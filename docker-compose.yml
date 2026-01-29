@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  sonarqube:
+    image: sonarqube:9.9-community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    networks:
+      - devsecops
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=webapp
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=password123
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - devsecops
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
+  mysql_data:
+
+networks:
+  devsecops:
+    driver: bridge
