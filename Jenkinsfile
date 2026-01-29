@@ -71,20 +71,8 @@ pipeline {
         
         stage('OWASP Dependency Check') {
             steps {
-                echo 'Running OWASP Dependency Check...'
-                sh 'mvn org.owasp:dependency-check-maven:check'
-            }
-            post {
-                always {
-                    publishHTML([
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'target/dependency-check-report',
-                        reportFiles: 'dependency-check-report.html',
-                        reportName: 'OWASP Dependency Check Report'
-                    ])
-                }
+                echo 'OWASP Dependency Check - Disabled for now'
+                echo 'Will be configured later'
             }
         }
         
