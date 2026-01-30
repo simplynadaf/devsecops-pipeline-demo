@@ -334,7 +334,7 @@ EOF
             emailext (
                 subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
                 body: "Good news! The pipeline succeeded.",
-                to: "team@company.com"
+                to: "simplynadaf@gmail.com"
             )
         }
         failure {
@@ -342,7 +342,7 @@ EOF
             emailext (
                 subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
                 body: "Bad news! The pipeline failed.",
-                to: "team@company.com"
+                to: "simplynadaf@gmail.com"
             )
         }
         unstable {
