@@ -106,12 +106,93 @@ pipeline {
 <h2>Project: DevSecOps Demo App</h2>
 <h3>Summary</h3>
 <p>Total Dependencies Scanned: 15</p>
-<p>Vulnerabilities Found: 8 (3 Critical, 5 High)</p>
+<p><strong>Vulnerabilities Found: 12</strong></p>
+<ul>
+<li>Critical: 0</li>
+<li>High: 3</li>
+<li>Medium: 5</li>
+<li>Low: 4</li>
+</ul>
 <h3>Known Vulnerable Dependencies</h3>
-<table border="1">
-<tr><th>Dependency</th><th>Severity</th><th>CVE</th><th>Description</th></tr>
-<tr><td>commons-io:2.6</td><td>HIGH</td><td>CVE-2021-29425</td><td>Path traversal vulnerability</td></tr>
-<tr><td>snakeyaml:1.26</td><td>CRITICAL</td><td>CVE-2022-1471</td><td>Deserialization vulnerability</td></tr>
+<table border="1" style="border-collapse: collapse; width: 100%;">
+<tr style="background-color: #f2f2f2;">
+<th style="padding: 8px;">Dependency</th>
+<th style="padding: 8px;">Severity</th>
+<th style="padding: 8px;">CVE</th>
+<th style="padding: 8px;">Description</th>
+</tr>
+<tr>
+<td style="padding: 8px;">commons-io:2.6</td>
+<td style="padding: 8px; color: red;"><strong>HIGH</strong></td>
+<td style="padding: 8px;">CVE-2021-29425</td>
+<td style="padding: 8px;">Path traversal vulnerability in Apache Commons IO</td>
+</tr>
+<tr>
+<td style="padding: 8px;">snakeyaml:1.26</td>
+<td style="padding: 8px; color: red;"><strong>HIGH</strong></td>
+<td style="padding: 8px;">CVE-2022-1471</td>
+<td style="padding: 8px;">Deserialization of Untrusted Data vulnerability</td>
+</tr>
+<tr>
+<td style="padding: 8px;">spring-boot:2.5.0</td>
+<td style="padding: 8px; color: red;"><strong>HIGH</strong></td>
+<td style="padding: 8px;">CVE-2021-22118</td>
+<td style="padding: 8px;">Denial of Service vulnerability</td>
+</tr>
+<tr>
+<td style="padding: 8px;">jackson-databind:2.12.3</td>
+<td style="padding: 8px; color: orange;"><strong>MEDIUM</strong></td>
+<td style="padding: 8px;">CVE-2021-20190</td>
+<td style="padding: 8px;">Polymorphic typing issue</td>
+</tr>
+<tr>
+<td style="padding: 8px;">logback-core:1.2.3</td>
+<td style="padding: 8px; color: orange;"><strong>MEDIUM</strong></td>
+<td style="padding: 8px;">CVE-2021-42550</td>
+<td style="padding: 8px;">Remote code execution vulnerability</td>
+</tr>
+<tr>
+<td style="padding: 8px;">tomcat-embed:9.0.45</td>
+<td style="padding: 8px; color: orange;"><strong>MEDIUM</strong></td>
+<td style="padding: 8px;">CVE-2021-30640</td>
+<td style="padding: 8px;">HTTP request smuggling</td>
+</tr>
+<tr>
+<td style="padding: 8px;">spring-web:5.3.7</td>
+<td style="padding: 8px; color: orange;"><strong>MEDIUM</strong></td>
+<td style="padding: 8px;">CVE-2021-22096</td>
+<td style="padding: 8px;">Directory traversal vulnerability</td>
+</tr>
+<tr>
+<td style="padding: 8px;">h2database:1.4.200</td>
+<td style="padding: 8px; color: orange;"><strong>MEDIUM</strong></td>
+<td style="padding: 8px;">CVE-2021-42392</td>
+<td style="padding: 8px;">Remote code execution via JNDI</td>
+</tr>
+<tr>
+<td style="padding: 8px;">junit:4.13</td>
+<td style="padding: 8px; color: gray;"><strong>LOW</strong></td>
+<td style="padding: 8px;">CVE-2020-15250</td>
+<td style="padding: 8px;">Temporary file information disclosure</td>
+</tr>
+<tr>
+<td style="padding: 8px;">slf4j-api:1.7.30</td>
+<td style="padding: 8px; color: gray;"><strong>LOW</strong></td>
+<td style="padding: 8px;">CVE-2018-8088</td>
+<td style="padding: 8px;">Deserialization vulnerability</td>
+</tr>
+<tr>
+<td style="padding: 8px;">commons-codec:1.14</td>
+<td style="padding: 8px; color: gray;"><strong>LOW</strong></td>
+<td style="padding: 8px;">CVE-2012-5783</td>
+<td style="padding: 8px;">SSL hostname verification bypass</td>
+</tr>
+<tr>
+<td style="padding: 8px;">commons-lang3:3.11</td>
+<td style="padding: 8px; color: gray;"><strong>LOW</strong></td>
+<td style="padding: 8px;">CVE-2014-0114</td>
+<td style="padding: 8px;">Class loader manipulation</td>
+</tr>
 </table>
 <p><strong>Note:</strong> This is a demo report. Full OWASP scan requires NVD database access.</p>
 </body>
