@@ -52,6 +52,22 @@ pipeline {
             }
         }
         
+        stage('Deploy to Nexus') {
+            steps {
+                echo 'Deploying artifacts to Nexus Repository...'
+                withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                    sh '''
+                        mvn deploy -DskipTests \
+                        -s settings.xml \
+                        -Dmaven.deploy.skip=false
+                    '''
+                }
+            }
+        }
+                }
+            }
+        }
+        
         stage('SonarQube Analysis') {
             steps {
                 echo 'Running SonarQube analysis...'

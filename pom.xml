@@ -25,7 +25,21 @@
         <maven.compiler.target>11</maven.compiler.target>
         <sonar.projectKey>devsecops-demo</sonar.projectKey>
         <sonar.projectName>DevSecOps Demo</sonar.projectName>
+        <nexus.url>http://172.31.24.8:8081</nexus.url>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus-releases</id>
+            <name>Nexus Release Repository</name>
+            <url>${nexus.url}/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <name>Nexus Snapshot Repository</name>
+            <url>${nexus.url}/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
