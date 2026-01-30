@@ -55,10 +55,12 @@ pipeline {
         stage('Deploy to Nexus') {
             steps {
                 echo 'Deploying artifacts to Nexus Repository...'
-                withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-                    sh '''
-                        # Create temporary settings.xml with credentials
-                        cat > temp-settings.xml << EOF
+                script {
+                    try {
+                        withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                            sh '''
+                                # Create temporary settings.xml with credentials
+                                cat > temp-settings.xml << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -78,14 +80,20 @@ pipeline {
     </servers>
 </settings>
 EOF
-                        
-                        mvn deploy -DskipTests \
-                        -s temp-settings.xml \
-                        -Dmaven.deploy.skip=false
-                        
-                        # Clean up temporary file
-                        rm -f temp-settings.xml
-                    '''
+                                
+                                mvn deploy -DskipTests \
+                                -s temp-settings.xml \
+                                -Dmaven.deploy.skip=false
+                                
+                                # Clean up temporary file
+                                rm -f temp-settings.xml
+                            '''
+                        }
+                    } catch (Exception e) {
+                        echo "Nexus deployment failed: ${e.getMessage()}"
+                        echo "Continuing pipeline without Nexus deployment for demo purposes"
+                        currentBuild.result = 'UNSTABLE'
+                    }
                 }
             }
         }
