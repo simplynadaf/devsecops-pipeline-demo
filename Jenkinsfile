@@ -52,25 +52,18 @@ pipeline {
             }
         }
         
-        stage('SonarQube Analysis') {
+        stage('SonarQube Analysis & Quality Gate') {
             steps {
                 echo 'Running SonarQube analysis...'
-                timeout(time: 10, unit: 'MINUTES') {
-                    withSonarQubeEnv('SonarQube') {
-                        sh '''
-                            mvn sonar:sonar \
-                            -Dsonar.projectKey=devsecops-demo \
-                            -Dsonar.host.url=${SONAR_HOST_URL}
-                        '''
-                    }
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        mvn sonar:sonar \
+                        -Dsonar.projectKey=devsecops-demo \
+                        -Dsonar.host.url=${SONAR_HOST_URL}
+                    '''
                 }
-            }
-        }
-        
-        stage('Quality Gate') {
-            steps {
                 echo 'Waiting for SonarQube Quality Gate...'
-                timeout(time: 5, unit: 'MINUTES') {
+                timeout(time: 10, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: false
                 }
             }
