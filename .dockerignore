@@ -1,4 +1,3 @@
-target/
 .git/
 .gitignore
 *.md
@@ -10,3 +9,7 @@ mvnw
 mvnw.cmd
 *.log
 *.tmp
+target/classes/
+target/test-classes/
+target/maven-*
+target/dependency-check-report/
