@@ -70,7 +70,7 @@ pipeline {
                 echo 'Checking SonarQube Quality Gate...'
                 script {
                     try {
-                        timeout(time: 3, unit: 'MINUTES') {
+                        timeout(time: 1, unit: 'MINUTES') {
                             def qg = waitForQualityGate()
                             echo "Quality Gate status: ${qg.status}"
                             if (qg.status != 'OK') {
