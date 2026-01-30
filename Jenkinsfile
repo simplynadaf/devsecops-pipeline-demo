@@ -138,16 +138,6 @@ pipeline {
             }
         }
         
-        stage('Security Gate') {
-            steps {
-                echo 'Evaluating security scan results...'
-                script {
-                    echo 'Security scans completed - OWASP and Trivy reports available'
-                    echo 'Proceeding to manual approval for deployment'
-                }
-            }
-        }
-        
         stage('Docker Push') {
             steps {
                 echo 'Pushing Docker image to Docker Hub...'
