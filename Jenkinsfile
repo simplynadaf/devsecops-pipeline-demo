@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'sarvar04/devsecop-demo'
         DOCKER_TAG = "${BUILD_NUMBER}"
-        SONAR_HOST_URL = 'http://sonarqube:9000'
+        SONAR_HOST_URL = 'http://localhost:9000'
         EC2_HOST = 'your-ec2-instance-ip'
         EC2_USER = 'ubuntu'
         DOCKERHUB_CREDENTIALS = 'dockerhub-credentials'
