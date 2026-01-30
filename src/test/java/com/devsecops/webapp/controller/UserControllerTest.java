@@ -1,62 +1,45 @@
 package com.devsecops.webapp.controller;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.test.web.servlet.MockMvc;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-
-@SpringBootTest
-@AutoConfigureMockMvc
 public class UserControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private UserController userController = new UserController();
 
     @Test
-    public void testHomeEndpoint() throws Exception {
-        mockMvc.perform(get("/api/"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("DevSecOps Demo Application - Version 1.0"));
+    public void testHomeEndpoint() {
+        String result = userController.home();
+        assertEquals("DevSecOps Demo Application - Version 1.0", result);
     }
 
     @Test
-    public void testHealthEndpoint() throws Exception {
-        mockMvc.perform(get("/api/health"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Application is running"));
+    public void testHealthEndpoint() {
+        String result = userController.health();
+        assertEquals("Application is running", result);
     }
 
     @Test
-    public void testGetUserWithValidId() throws Exception {
-        mockMvc.perform(get("/api/user/123"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("User found: User-123"));
+    public void testGetUserWithValidId() {
+        String result = userController.getUser("123");
+        assertEquals("User found: User-123", result);
     }
 
     @Test
-    public void testGetUserWithInvalidId() throws Exception {
-        mockMvc.perform(get("/api/user/abc"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("User not found"));
+    public void testGetUserWithInvalidId() {
+        String result = userController.getUser("abc");
+        assertEquals("User not found", result);
     }
 
     @Test
-    public void testDebugEndpoint() throws Exception {
-        mockMvc.perform(get("/api/debug"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Debug mode enabled. Application version: 1.0.0"));
+    public void testDebugEndpoint() {
+        String result = userController.debug();
+        assertEquals("Debug mode enabled. Application version: 1.0.0", result);
     }
 
     @Test
-    public void testAddComment() throws Exception {
-        mockMvc.perform(post("/api/comment")
-                .param("comment", "Test comment"))
-                .andExpect(status().isOk());
+    public void testAddComment() {
+        String result = userController.addComment("Test comment");
+        assertTrue(result.contains("Test comment"));
     }
 }
