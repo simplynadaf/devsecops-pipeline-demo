@@ -26,7 +26,8 @@ pipeline {
         stage('Maven Build') {
             steps {
                 echo 'Building application with Maven...'
-                sh 'mvn clean compile package -DskipTests'
+                sh 'mvn clean compile -Dmaven.main.skip=false -Dmaven.test.skip=true'
+                sh 'mvn package -DskipTests'
             }
             post {
                 always {
