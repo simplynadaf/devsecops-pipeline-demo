@@ -308,16 +308,16 @@ EOF
 
                 sshagent(credentials: ['ec2-ssh-key']) {
                     sh """
-                      ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+                      ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
                         docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
                         docker stop devsecops-webapp || true
                         docker rm devsecops-webapp || true
-                        docker run -d \
-                          --name devsecops-webapp \
-                          -p 8081:8080 \
-                          --restart unless-stopped \
+                        docker run -d \\
+                          --name devsecops-webapp \\
+                          -p 8081:8080 \\
+                          --restart unless-stopped \\
                           ${DOCKER_IMAGE}:${DOCKER_TAG}
-                      EOF
+                      '
                     """
                 }
             }
