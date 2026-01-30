@@ -67,21 +67,20 @@ pipeline {
         
         stage('Quality Gate') {
             steps {
-                echo 'Waiting for SonarQube Quality Gate...'
+                echo 'Checking SonarQube Quality Gate...'
                 script {
                     try {
-                        timeout(time: 2, unit: 'MINUTES') {
+                        timeout(time: 3, unit: 'MINUTES') {
                             def qg = waitForQualityGate()
+                            echo "Quality Gate status: ${qg.status}"
                             if (qg.status != 'OK') {
-                                echo "Quality Gate status: ${qg.status}"
-                                echo "Warning: Quality Gate failed but continuing pipeline for demo"
-                            } else {
-                                echo "Quality Gate passed successfully"
+                                echo "Quality Gate failed but continuing for demo purposes"
                             }
                         }
                     } catch (Exception e) {
-                        echo "Quality Gate timeout or error: ${e.getMessage()}"
-                        echo "Continuing pipeline - webhook may not be configured properly"
+                        echo "Quality Gate check failed or timed out: ${e.getMessage()}"
+                        echo "SonarQube analysis may still be processing - continuing pipeline"
+                        echo "You can check results later at: ${SONAR_HOST_URL}"
                     }
                 }
             }
