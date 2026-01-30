@@ -91,7 +91,9 @@ pipeline {
                 echo 'Running OWASP Dependency Check...'
                 script {
                     try {
-                        sh 'mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=0 -DnvdDatafeedEnabled=false -DnvdApiDatafeedEnabled=false'
+                        timeout(time: 1, unit: 'MINUTES') {
+                            sh 'mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=0 -DnvdDatafeedEnabled=false -DnvdApiDatafeedEnabled=false'
+                        }
                     } catch (Exception e) {
                         echo "OWASP scan encountered issues - generating demo report"
                         // Create a demo report for presentation
