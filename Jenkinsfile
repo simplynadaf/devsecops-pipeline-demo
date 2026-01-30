@@ -124,7 +124,7 @@ pipeline {
                         // Use external HTML template for demo report
                         sh '''
                             mkdir -p target/dependency-check-report
-                            cp templates/owasp-demo-report.html target/dependency-check-report/dependency-check-report.html
+                            cp src/main/resources/templates/owasp-demo-report.html target/dependency-check-report/dependency-check-report.html
                             # Replace date placeholder
                             sed -i "s/\\$(date)/$(date)/" target/dependency-check-report/dependency-check-report.html
                         '''
