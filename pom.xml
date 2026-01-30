@@ -80,7 +80,10 @@
                 <configuration>
                     <format>ALL</format>
                     <outputDirectory>target/dependency-check-report</outputDirectory>
-                    <!-- Safer configuration to avoid AWS alerts -->
+                    <!-- Disable NVD feeds to avoid 403 errors -->
+                    <nvdApiDatafeedEnabled>false</nvdApiDatafeedEnabled>
+                    <nvdDatafeedEnabled>false</nvdDatafeedEnabled>
+                    <!-- Use only local analyzers for demo -->
                     <skipSystemScope>true</skipSystemScope>
                     <skipTestScope>true</skipTestScope>
                     <failBuildOnCVSS>0</failBuildOnCVSS>
@@ -88,12 +91,6 @@
                     <nuspecAnalyzerEnabled>false</nuspecAnalyzerEnabled>
                     <nodeAnalyzerEnabled>false</nodeAnalyzerEnabled>
                     <retireJsAnalyzerEnabled>false</retireJsAnalyzerEnabled>
-                    <!-- Fix NVD feed issues -->
-                    <nvdDatafeedUrl>https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz</nvdDatafeedUrl>
-                    <nvdMaxRetryCount>3</nvdMaxRetryCount>
-                    <nvdDelay>4000</nvdDelay>
-                    <cveValidForHours>168</cveValidForHours>
-                    <!-- Disable problematic analyzers for demo -->
                     <centralAnalyzerEnabled>true</centralAnalyzerEnabled>
                     <nexusAnalyzerEnabled>false</nexusAnalyzerEnabled>
                     <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
