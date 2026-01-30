@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevSecOps Demo Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            background: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .feature {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .feature-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ DevSecOps Demo</h1>
+        <p class="subtitle">
+            <span class="status-badge">● LIVE</span>
+        </p>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <strong>Security Scanning</strong>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🚀</div>
+                <strong>CI/CD Pipeline</strong>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <strong>Quality Gates</strong>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>
+                <span class="icon">👤</span>
+                User Lookup
+            </h3>
+            <input type="text" id="userId" placeholder="Enter User ID (e.g., 123)">
+            <button onclick="getUser()">Search User</button>
+            <div class="loader" id="userLoader"></div>
+            <div class="result" id="userResult"></div>
+        </div>
+
+        <div class="card">
+            <h3>
+                <span class="icon">💬</span>
+                Add Comment
+            </h3>
+            <input type="text" id="comment" placeholder="Enter your comment">
+            <button onclick="addComment()">Submit Comment</button>
+            <div class="loader" id="commentLoader"></div>
+            <div class="result" id="commentResult"></div>
+        </div>
+
+        <div class="card">
+            <h3>
+                <span class="icon">🔧</span>
+                System Information
+            </h3>
+            <button onclick="getDebug()">Get Debug Info</button>
+            <div class="loader" id="debugLoader"></div>
+            <div class="result" id="debugResult"></div>
+        </div>
+    </div>
+
+    <script>
+        async function getUser() {
+            const userId = document.getElementById('userId').value;
+            const result = document.getElementById('userResult');
+            const loader = document.getElementById('userLoader');
+            
+            if (!userId) {
+                showResult(result, 'Please enter a user ID', true);
+                return;
+            }
+
+            loader.style.display = 'block';
+            result.classList.remove('show');
+
+            try {
+                const response = await fetch(`/api/user/${userId}`);
+                const data = await response.text();
+                showResult(result, data, false);
+            } catch (error) {
+                showResult(result, 'Error: ' + error.message, true);
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        async function addComment() {
+            const comment = document.getElementById('comment').value;
+            const result = document.getElementById('commentResult');
+            const loader = document.getElementById('commentLoader');
+            
+            if (!comment) {
+                showResult(result, 'Please enter a comment', true);
+                return;
+            }
+
+            loader.style.display = 'block';
+            result.classList.remove('show');
+
+            try {
+                const response = await fetch(`/api/comment?comment=${encodeURIComponent(comment)}`, {
+                    method: 'POST'
+                });
+                const data = await response.text();
+                result.innerHTML = data;
+                result.classList.remove('error');
+                result.classList.add('show');
+            } catch (error) {
+                showResult(result, 'Error: ' + error.message, true);
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        async function getDebug() {
+            const result = document.getElementById('debugResult');
+            const loader = document.getElementById('debugLoader');
+            
+            loader.style.display = 'block';
+            result.classList.remove('show');
+
+            try {
+                const response = await fetch('/api/debug');
+                const data = await response.text();
+                showResult(result, data, false);
+            } catch (error) {
+                showResult(result, 'Error: ' + error.message, true);
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        function showResult(element, message, isError) {
+            element.textContent = message;
+            element.classList.toggle('error', isError);
+            element.classList.add('show');
+        }
+
+        // Check health on load
+        window.onload = async function() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.text();
+                console.log('Health check:', data);
+            } catch (error) {
+                console.error('Health check failed:', error);
+            }
+        }
+    </script>
+</body>
+</html>

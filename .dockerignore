@@ -1,0 +1,12 @@
+target/
+.git/
+.gitignore
+*.md
+Jenkinsfile
+pom.xml
+src/
+.mvn/
+mvnw
+mvnw.cmd
+*.log
+*.tmp

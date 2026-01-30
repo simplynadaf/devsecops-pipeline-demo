@@ -1,16 +1,10 @@
 package com.devsecops.webapp.controller;
 
 import org.springframework.web.bind.annotation.*;
-import java.sql.*;
 
 @RestController
 @RequestMapping("/api")
 public class UserController {
-    
-    // Hardcoded credentials - Security vulnerability
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/webapp";
-    private static final String DB_USER = "admin";
-    private static final String DB_PASSWORD = "password123";
     
     @GetMapping("/")
     public String home() {
@@ -22,29 +16,34 @@ public class UserController {
         return "Application is running";
     }
     
-    // SQL Injection vulnerability - for demo purposes
+    // Weak input validation - Medium severity
     @GetMapping("/user/{id}")
     public String getUser(@PathVariable String id) {
-        try {
-            Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            Statement stmt = conn.createStatement();
-            // Vulnerable SQL query
-            String query = "SELECT * FROM users WHERE id = " + id;
-            ResultSet rs = stmt.executeQuery(query);
-            
-            if (rs.next()) {
-                return "User: " + rs.getString("name");
-            }
-            return "User not found";
-        } catch (SQLException e) {
-            return "Database error: " + e.getMessage();
+        // Basic validation but still has issues
+        if (id == null || id.isEmpty()) {
+            return "Invalid user ID";
         }
+        
+        // Simulated user lookup without actual SQL injection
+        if (id.matches("\\d+")) {
+            return "User found: User-" + id;
+        }
+        return "User not found";
     }
     
-    // XSS vulnerability - for demo purposes
+    // Missing output encoding - Medium severity
     @PostMapping("/comment")
     public String addComment(@RequestParam String comment) {
-        // No input sanitization
-        return "<div>Comment added: " + comment + "</div>";
+        // No proper output encoding - potential XSS
+        if (comment != null && comment.length() > 0) {
+            return "<div>Comment added: " + comment + "</div>";
+        }
+        return "<div>Empty comment</div>";
+    }
+    
+    // Information disclosure - Low/Medium severity
+    @GetMapping("/debug")
+    public String debug() {
+        return "Debug mode enabled. Application version: 1.0.0";
     }
 }

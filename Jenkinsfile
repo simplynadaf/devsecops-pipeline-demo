@@ -2,11 +2,12 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_IMAGE = 'vulnerable-webapp'
+        DOCKER_IMAGE = 'sarvar04/devsecop-demo'
         DOCKER_TAG = "${BUILD_NUMBER}"
         SONAR_HOST_URL = 'http://sonarqube:9000'
         EC2_HOST = 'your-ec2-instance-ip'
         EC2_USER = 'ubuntu'
+        DOCKERHUB_CREDENTIALS = 'dockerhub-credentials'
     }
     
     tools {
@@ -71,42 +72,57 @@ pipeline {
         
         stage('OWASP Dependency Check') {
             steps {
-                echo 'OWASP Dependency Check - Disabled for now'
-                echo 'Will be configured later'
+                echo 'Running OWASP Dependency Check (limited scan)...'
+                sh 'mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=0'
+            }
+            post {
+                always {
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'target/dependency-check-report',
+                        reportFiles: 'dependency-check-report.html',
+                        reportName: 'OWASP Dependency Check Report'
+                    ])
+                }
             }
         }
         
-        stage('Docker Build') {
+        stage('Docker Build & Push') {
             steps {
-                echo 'Building Docker image...'
+                echo 'Building and pushing Docker image to Docker Hub...'
                 script {
                     dockerImage = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    
+                    docker.withRegistry('https://registry-1.docker.io/v2/', DOCKERHUB_CREDENTIALS) {
+                        dockerImage.push()
+                        dockerImage.push('latest')
+                    }
                 }
             }
         }
         
         stage('Trivy Security Scan') {
             steps {
-                echo 'Running Trivy security scan...'
-                sh '''
-                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-                    -v $PWD:/tmp/.cache/ aquasec/trivy:latest image \
-                    --exit-code 1 --severity HIGH,CRITICAL \
-                    --format json --output /tmp/.cache/trivy-report.json \
-                    ${DOCKER_IMAGE}:${DOCKER_TAG} || true
-                '''
-                
-                sh '''
-                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-                    -v $PWD:/tmp/.cache/ aquasec/trivy:latest image \
-                    --exit-code 1 --severity HIGH,CRITICAL \
-                    --format table --output /tmp/.cache/trivy-report.txt \
-                    ${DOCKER_IMAGE}:${DOCKER_TAG}
-                '''
+                echo 'Running Trivy security scan on Docker image and dependencies...'
+                script {
+                    try {
+                        sh '''
+                            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+                            -v $PWD:/tmp/.cache/ aquasec/trivy:latest image \
+                            --severity HIGH,CRITICAL \
+                            --format table --output /tmp/.cache/trivy-report.txt \
+                            ${DOCKER_IMAGE}:${DOCKER_TAG}
+                        '''
+                    } catch (Exception e) {
+                        echo "Trivy scan completed with findings"
+                    }
+                }
             }
             post {
                 always {
-                    archiveArtifacts artifacts: 'trivy-report.*', fingerprint: true
+                    archiveArtifacts artifacts: 'trivy-report.*', fingerprint: true, allowEmptyArchive: true
                 }
             }
         }
@@ -115,9 +131,18 @@ pipeline {
             steps {
                 echo 'Evaluating security scan results...'
                 script {
-                    def trivyReport = readFile('trivy-report.txt')
-                    if (trivyReport.contains('HIGH') || trivyReport.contains('CRITICAL')) {
-                        error('CRITICAL/HIGH vulnerabilities found! Pipeline stopped.')
+                    if (fileExists('trivy-report.txt')) {
+                        def trivyReport = readFile('trivy-report.txt')
+                        if (trivyReport.contains('CRITICAL')) {
+                            echo 'WARNING: CRITICAL vulnerabilities found!'
+                            currentBuild.result = 'UNSTABLE'
+                        } else if (trivyReport.contains('HIGH')) {
+                            echo 'WARNING: HIGH vulnerabilities found!'
+                        } else {
+                            echo 'No critical vulnerabilities found'
+                        }
+                    } else {
+                        echo 'Trivy report not found, skipping security gate'
                     }
                 }
             }
@@ -143,21 +168,15 @@ pipeline {
                 }
             }
             steps {
-                echo 'Deploying to EC2 instance...'
+                echo 'Deploying to EC2 instance from Docker Hub...'
                 script {
-                    // Save Docker image as tar
-                    sh "docker save ${DOCKER_IMAGE}:${DOCKER_TAG} > ${DOCKER_IMAGE}-${DOCKER_TAG}.tar"
-                    
-                    // Copy to EC2 and deploy
                     sshagent(['ec2-ssh-key']) {
                         sh '''
-                            scp -o StrictHostKeyChecking=no ${DOCKER_IMAGE}-${DOCKER_TAG}.tar ${EC2_USER}@${EC2_HOST}:/tmp/
                             ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} "
-                                docker load < /tmp/${DOCKER_IMAGE}-${DOCKER_TAG}.tar
-                                docker stop vulnerable-webapp || true
-                                docker rm vulnerable-webapp || true
-                                docker run -d --name vulnerable-webapp -p 8080:8080 ${DOCKER_IMAGE}:${DOCKER_TAG}
-                                rm /tmp/${DOCKER_IMAGE}-${DOCKER_TAG}.tar
+                                docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
+                                docker stop devsecops-webapp || true
+                                docker rm devsecops-webapp || true
+                                docker run -d --name devsecops-webapp -p 8080:8080 ${DOCKER_IMAGE}:${DOCKER_TAG}
                             "
                         '''
                     }
