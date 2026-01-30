@@ -239,8 +239,8 @@ EOF
                             docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
                             -v $PWD:/tmp/.cache/ aquasec/trivy:latest image \
                             --severity HIGH,CRITICAL \
-                            --format table --output /tmp/.cache/trivy-report.txt \
-                            ${DOCKER_IMAGE}:${DOCKER_TAG}
+                            --format table \
+                            ${DOCKER_IMAGE}:${DOCKER_TAG} | tee trivy-report.txt
                         '''
                     } catch (Exception e) {
                         echo "Trivy scan completed with findings"
@@ -274,7 +274,11 @@ EOF
                 echo 'Evaluating security scan results...'
                 script {
                     if (fileExists('trivy-report.txt')) {
+                        echo '=== TRIVY SECURITY SCAN RESULTS ==='
                         def trivyReport = readFile('trivy-report.txt')
+                        echo trivyReport
+                        echo '=== END OF TRIVY REPORT ==='
+                        
                         if (trivyReport.contains('CRITICAL')) {
                             echo 'WARNING: CRITICAL vulnerabilities found!'
                             currentBuild.result = 'UNSTABLE'
@@ -282,6 +286,27 @@ EOF
                             echo 'WARNING: HIGH vulnerabilities found!'
                         } else {
                             echo 'No critical vulnerabilities found'
+                        }
+                        
+                        // Manual approval after reviewing security report
+                        timeout(time: 15, unit: 'MINUTES') {
+                            def userChoice = input(
+                                message: 'Security scan completed. Review the Trivy report above. Do you want to continue with deployment?',
+                                ok: 'Submit',
+                                parameters: [
+                                    choice(
+                                        name: 'CONTINUE_DEPLOYMENT',
+                                        choices: ['No', 'Yes'],
+                                        description: 'Continue with deployment after security review?'
+                                    )
+                                ]
+                            )
+                            
+                            if (userChoice == 'No') {
+                                error('Deployment cancelled by user after security review')
+                            } else {
+                                echo 'Deployment approved by user. Continuing pipeline...'
+                            }
                         }
                     } else {
                         echo 'Trivy report not found, skipping security gate'
@@ -292,10 +317,11 @@ EOF
         
         stage('Manual Approval') {
             steps {
+                echo 'Final deployment approval...'
                 script {
                     timeout(time: 10, unit: 'MINUTES') {
-                        input message: 'Deploy to Production?', 
-                              ok: 'Deploy',
+                        input message: 'Ready for Production Deployment?', 
+                              ok: 'Deploy to Production',
                               submitterParameter: 'APPROVER'
                     }
                 }
