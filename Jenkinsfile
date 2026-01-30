@@ -223,8 +223,8 @@ EOF
                 echo 'Building Docker image...'
                 script {
                     sh """
-                        sudo docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
-                        sudo docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
+                        docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                        docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
                     """
                 }
             }
@@ -260,9 +260,9 @@ EOF
                 script {
                     withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh """
-                            echo \$DOCKER_PASS | sudo docker login -u \$DOCKER_USER --password-stdin
-                            sudo docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
-                            sudo docker push ${DOCKER_IMAGE}:latest
+                            echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
+                            docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                            docker push ${DOCKER_IMAGE}:latest
                         """
                     }
                 }
