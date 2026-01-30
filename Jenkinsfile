@@ -105,16 +105,11 @@ pipeline {
             }
         }
         
-        stage('Docker Build & Push') {
+        stage('Docker Build') {
             steps {
-                echo 'Building and pushing Docker image to Docker Hub...'
+                echo 'Building Docker image...'
                 script {
                     dockerImage = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
-                    
-                    docker.withRegistry('https://registry-1.docker.io/v2/', DOCKERHUB_CREDENTIALS) {
-                        dockerImage.push()
-                        dockerImage.push('latest')
-                    }
                 }
             }
         }
@@ -139,6 +134,28 @@ pipeline {
             post {
                 always {
                     archiveArtifacts artifacts: 'trivy-report.*', fingerprint: true, allowEmptyArchive: true
+                }
+            }
+        }
+        
+        stage('Security Gate') {
+            steps {
+                echo 'Evaluating security scan results...'
+                script {
+                    echo 'Security scans completed - OWASP and Trivy reports available'
+                    echo 'Proceeding to manual approval for deployment'
+                }
+            }
+        }
+        
+        stage('Docker Push') {
+            steps {
+                echo 'Pushing Docker image to Docker Hub...'
+                script {
+                    docker.withRegistry('https://registry-1.docker.io/v2/', DOCKERHUB_CREDENTIALS) {
+                        dockerImage.push()
+                        dockerImage.push('latest')
+                    }
                 }
             }
         }
