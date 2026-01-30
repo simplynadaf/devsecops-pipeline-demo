@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    options {
+    timeout(time: 30, unit: 'MINUTES')
+    }
+    
     environment {
         DOCKER_IMAGE = 'sarvar04/devsecop-demo'
         DOCKER_TAG = "${BUILD_NUMBER}"
@@ -51,13 +55,14 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 echo 'Running SonarQube analysis...'
-                withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        mvn sonar:sonar \
-                        -Dsonar.projectKey=devsecops-demo \
-                        -Dsonar.host.url=${SONAR_HOST_URL} \
-                        -Dsonar.login=${SONAR_AUTH_TOKEN}
-                    '''
+                timeout(time: 10, unit: 'MINUTES') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh '''
+                            mvn sonar:sonar \
+                            -Dsonar.projectKey=devsecops-demo \
+                            -Dsonar.host.url=${SONAR_HOST_URL}
+                        '''
+                    }
                 }
             }
         }
