@@ -52,7 +52,7 @@ pipeline {
             }
         }
         
-        stage('SonarQube Analysis & Quality Gate') {
+        stage('SonarQube Analysis') {
             steps {
                 echo 'Running SonarQube analysis...'
                 withSonarQubeEnv('SonarQube') {
@@ -62,6 +62,11 @@ pipeline {
                         -Dsonar.host.url=${SONAR_HOST_URL}
                     '''
                 }
+            }
+        }
+        
+        stage('Quality Gate') {
+            steps {
                 echo 'Waiting for SonarQube Quality Gate...'
                 timeout(time: 10, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: false
