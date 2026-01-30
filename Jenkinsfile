@@ -328,7 +328,7 @@ EOF
             }
         }
         
-        stage('Deploy to EC2') {
+        stage('Deployment') {
             steps {
                 echo 'Deploying Docker image to EC2...'
 
