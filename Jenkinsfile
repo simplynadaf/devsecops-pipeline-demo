@@ -222,7 +222,10 @@ EOF
             steps {
                 echo 'Building Docker image...'
                 script {
-                    dockerImage = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    sh """
+                        sudo docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                        sudo docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
+                    """
                 }
             }
         }
@@ -255,9 +258,12 @@ EOF
             steps {
                 echo 'Pushing Docker image to Docker Hub...'
                 script {
-                    docker.withRegistry('https://registry-1.docker.io/v2/', DOCKERHUB_CREDENTIALS) {
-                        dockerImage.push()
-                        dockerImage.push('latest')
+                    withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh """
+                            echo \$DOCKER_PASS | sudo docker login -u \$DOCKER_USER --password-stdin
+                            sudo docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                            sudo docker push ${DOCKER_IMAGE}:latest
+                        """
                     }
                 }
             }
