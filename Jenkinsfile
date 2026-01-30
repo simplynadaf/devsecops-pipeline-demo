@@ -59,34 +59,13 @@ pipeline {
                     try {
                         withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
                             sh '''
-                                # Create temporary settings.xml with credentials
-                                cat > temp-settings.xml << EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 
-          http://maven.apache.org/xsd/settings-1.0.0.xsd">
-    <servers>
-        <server>
-            <id>nexus-releases</id>
-            <username>${NEXUS_USER}</username>
-            <password>${NEXUS_PASS}</password>
-        </server>
-        <server>
-            <id>nexus-snapshots</id>
-            <username>${NEXUS_USER}</username>
-            <password>${NEXUS_PASS}</password>
-        </server>
-    </servers>
-</settings>
-EOF
+                                # Use existing settings.xml with environment variables
+                                export NEXUS_USER=${NEXUS_USER}
+                                export NEXUS_PASS=${NEXUS_PASS}
                                 
                                 mvn deploy -DskipTests \
-                                -s temp-settings.xml \
+                                -s settings.xml \
                                 -Dmaven.deploy.skip=false
-                                
-                                # Clean up temporary file
-                                rm -f temp-settings.xml
                             '''
                         }
                     } catch (Exception e) {
