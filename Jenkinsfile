@@ -315,10 +315,17 @@ EOF
                     sshagent(['ec2-ssh-key']) {
                         sh '''
                             ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} "
+                                # Start MySQL if not running
+                                docker run -d --name mysql-db -e MYSQL_ROOT_PASSWORD=rootpassword -e MYSQL_DATABASE=webapp -e MYSQL_USER=admin -e MYSQL_PASSWORD=changeme -p 3306:3306 mysql:8.0 || true
+                                
+                                # Wait for MySQL to be ready
+                                sleep 15
+                                
+                                # Deploy application
                                 docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
                                 docker stop devsecops-webapp || true
                                 docker rm devsecops-webapp || true
-                                docker run -d --name devsecops-webapp -p 8080:8080 ${DOCKER_IMAGE}:${DOCKER_TAG}
+                                docker run -d --name devsecops-webapp -p 8080:8080 --link mysql-db:mysql -e DB_URL=jdbc:mysql://mysql:3306/webapp -e DB_USER=admin -e DB_PASSWORD=changeme ${DOCKER_IMAGE}:${DOCKER_TAG}
                             "
                         '''
                     }
