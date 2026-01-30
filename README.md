@@ -2,6 +2,8 @@
 
 This project demonstrates a complete DevSecOps pipeline with security scanning tools.
 
+**Last Updated**: January 30, 2026
+
 ## Architecture
 GitHub → Jenkins → SonarQube → Maven → OWASP → Docker → Trivy → EC2
 
