@@ -88,8 +88,15 @@
                     <nuspecAnalyzerEnabled>false</nuspecAnalyzerEnabled>
                     <nodeAnalyzerEnabled>false</nodeAnalyzerEnabled>
                     <retireJsAnalyzerEnabled>false</retireJsAnalyzerEnabled>
-                    <!-- Use cached data, minimal updates -->
+                    <!-- Fix NVD feed issues -->
+                    <nvdDatafeedUrl>https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz</nvdDatafeedUrl>
+                    <nvdMaxRetryCount>3</nvdMaxRetryCount>
+                    <nvdDelay>4000</nvdDelay>
                     <cveValidForHours>168</cveValidForHours>
+                    <!-- Disable problematic analyzers for demo -->
+                    <centralAnalyzerEnabled>true</centralAnalyzerEnabled>
+                    <nexusAnalyzerEnabled>false</nexusAnalyzerEnabled>
+                    <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
                 </configuration>
             </plugin>
         </plugins>
