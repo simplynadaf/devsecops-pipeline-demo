@@ -109,9 +109,9 @@
                 <configuration>
                     <format>ALL</format>
                     <outputDirectory>target/dependency-check-report</outputDirectory>
-                    <!-- Disable NVD feeds to avoid 403 errors -->
-                    <nvdApiDatafeedEnabled>false</nvdApiDatafeedEnabled>
-                    <nvdDatafeedEnabled>false</nvdDatafeedEnabled>
+                    <!-- Enable NVD feeds for real vulnerability scanning -->
+                    <nvdApiDatafeedEnabled>true</nvdApiDatafeedEnabled>
+                    <nvdDatafeedEnabled>true</nvdDatafeedEnabled>
                     <!-- Use only local analyzers for demo -->
                     <skipSystemScope>true</skipSystemScope>
                     <skipTestScope>true</skipTestScope>

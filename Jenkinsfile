@@ -117,7 +117,7 @@ pipeline {
                 script {
                     try {
                         timeout(time: 1, unit: 'MINUTES') {
-                            sh 'mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=0 -DnvdDatafeedEnabled=false -DnvdApiDatafeedEnabled=false'
+                            sh 'mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=0'
                         }
                     } catch (Exception e) {
                         echo "OWASP scan encountered issues - generating demo report"
