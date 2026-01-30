@@ -32,3 +32,8 @@ dependency-check-report/
 
 # Docker
 *.tar
+
+# Local documentation files (keep only README.md in git)
+DEMO.md
+SETUP-STEPS.md
+CODE-REVIEW.md
