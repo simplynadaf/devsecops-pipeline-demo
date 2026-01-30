@@ -57,9 +57,34 @@ pipeline {
                 echo 'Deploying artifacts to Nexus Repository...'
                 withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
                     sh '''
+                        # Create temporary settings.xml with credentials
+                        cat > temp-settings.xml << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 
+          http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <servers>
+        <server>
+            <id>nexus-releases</id>
+            <username>${NEXUS_USER}</username>
+            <password>${NEXUS_PASS}</password>
+        </server>
+        <server>
+            <id>nexus-snapshots</id>
+            <username>${NEXUS_USER}</username>
+            <password>${NEXUS_PASS}</password>
+        </server>
+    </servers>
+</settings>
+EOF
+                        
                         mvn deploy -DskipTests \
-                        -s settings.xml \
+                        -s temp-settings.xml \
                         -Dmaven.deploy.skip=false
+                        
+                        # Clean up temporary file
+                        rm -f temp-settings.xml
                     '''
                 }
             }
