@@ -42,4 +42,28 @@ public class UserControllerTest {
         String result = userController.addComment("Test comment");
         assertTrue(result.contains("Test comment"));
     }
+    
+    @Test
+    public void testAddEmptyComment() {
+        String result = userController.addComment("");
+        assertEquals("<div>Empty comment</div>", result);
+    }
+    
+    @Test
+    public void testAddNullComment() {
+        String result = userController.addComment(null);
+        assertEquals("<div>Empty comment</div>", result);
+    }
+    
+    @Test
+    public void testGetUserWithEmptyId() {
+        String result = userController.getUser("");
+        assertEquals("Invalid user ID", result);
+    }
+    
+    @Test
+    public void testGetUserWithNullId() {
+        String result = userController.getUser(null);
+        assertEquals("Invalid user ID", result);
+    }
 }
